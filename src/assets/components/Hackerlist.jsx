@@ -12,7 +12,7 @@ function Hackerlist() {
   const getData = async () => {
     try {
       const response = await axios(
-        "http://hn.algolia.com/api/v1/search_by_date?tags=story"
+        "http://hn.algolia.com/api/v1/search_by_date?tags=story",
       );
       setPosts(response.data.hits);
       console.log(response.data.hits);
@@ -25,7 +25,7 @@ function Hackerlist() {
   const getSearchData = async (e) => {
     try {
       const response = await axios(
-        `http://hn.algolia.com/api/v1/search?query=${e.target.value}&tags=story`
+        `http://hn.algolia.com/api/v1/search?query=${e.target.value}&tags=story`,
       );
       setPosts(response.data.hits);
       console.log(response.data.hits);
@@ -48,8 +48,8 @@ function Hackerlist() {
           </svg>
         </div>
       </div>
-      <h2>All posts</h2>
-      <ul>
+      <h2 className="hero">All posts</h2>
+      <ul className="links">
         {!posts ? (
           <p>Loading</p>
         ) : (
