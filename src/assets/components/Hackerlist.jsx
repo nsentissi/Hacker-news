@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Loading from "./loading";
 
 function Hackerlist() {
   const [posts, setPosts] = useState(null);
@@ -12,7 +13,7 @@ function Hackerlist() {
   const getData = async () => {
     try {
       const response = await axios(
-        "http://hn.algolia.com/api/v1/search_by_date?tags=story",
+        "http://hn.algolia.com/api/v1/search_by_date?tags=story"
       );
       setPosts(response.data.hits);
       console.log(response.data.hits);
@@ -25,7 +26,7 @@ function Hackerlist() {
   const getSearchData = async (e) => {
     try {
       const response = await axios(
-        `http://hn.algolia.com/api/v1/search?query=${e.target.value}&tags=story`,
+        `http://hn.algolia.com/api/v1/search?query=${e.target.value}&tags=story`
       );
       setPosts(response.data.hits);
       console.log(response.data.hits);
@@ -35,9 +36,34 @@ function Hackerlist() {
     }
   };
 
+  const sortPostsByPoints = () => {
+    if (posts) {
+      const sortedPosts = [...posts];
+      sortedPosts.sort((a, b) => b.points - a.points);
+      setPosts(sortedPosts);
+    }
+  };
+
+  const sortPostsByDate = () => {
+    if (posts) {
+      const sortedPosts = [...posts];
+      sortedPosts.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setPosts(sortedPosts);
+    }
+  };
+
+  const sortPostsByComments = () => {
+    if (posts) {
+      const sortedPosts = [...posts];
+      sortedPosts.sort((a, b) => b.num_comments - a.num_comments);
+      setPosts(sortedPosts);
+    }
+  };
+
   return (
     <div>
-      {/* <input className="inputarea" type="text"  onChange={getSearchData}/> */}
       <div class="container">
         <div class="search-container">
           <input onChange={getSearchData} class="input" type="text" />
@@ -48,16 +74,26 @@ function Hackerlist() {
           </svg>
         </div>
       </div>
+      <div className="button-group">
+      <button className="btn-sort" onClick={sortPostsByDate}>Sort by Date</button>
+      <button className="btn-sort" onClick={sortPostsByPoints}>Sort by Points</button>
+      <button className="btn-sort" oncClick={sortPostsByComments}>Sort by number of Comments</button>
+      </div>
       <h2 className="hero">All posts</h2>
       <ul className="links">
         {!posts ? (
-          <p>Loading</p>
+          <p><Loading/> </p>
         ) : (
           posts.map((post) => (
             <li key={post.story_id}>
               <h2> {post.title}</h2>
               <p>Date: {post.created_at}</p>
-              <p>Link: {post.url}</p>
+              <p>
+                Link:{" "}
+                <a className="link" href={post.url} target="_blank">
+                  {post.url}
+                </a>
+              </p>
               <p>Points: {post.points}</p>
               <p>Comments: {post.num_comments}</p>
             </li>
